@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/league.css">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<section>
+						<h2>Implementing Reproducible Cookbook Environments</h2>
+						<h4>for Advanced Analyses on Science Gateways</h4>
+						<span style="font-size: 1.5rem">William Mobley<sup>1</sup>, Lissa Pearson<sup>1</sup>, Max Osorio<sup>2</sup>, Sal Tijerina<sup>1</sup>,
+							Virginia Trueheart<sup>1</sup>,<br> Kasey Faust<sup>3</sup>, Suzanne  A. Pierce<sup>1</sup></span>
+						<br>
+						<span style="font-size: 1rem; ">
+							<ol>
+								<li>Texas Advanced Computing Center University of Texas Austin, USA</li>
+								<li>MetaLearn SPA Chile</li>
+								<li>Department of Civil, Architectural, Environmental Engineering University of Texas Austin, USA</li>
+							</ol>
+						</span>
+					</section>
+					<section>
+						<h2>The Problem</h2>
+						<p>Researchers need a reproducible environment that handles complex
+							 requirements without the need to use a command line.</p>
+					</section>
+					<section>
+						<h2>Use Case - Sites and Stories:</h2>
+						<h4>Enabling Large Language Model access for Social Scientists</h4>
+
+						<p>Our colleagues are developing workflows to extract problems identified during stakeholder engagement.</p>
+						<hr>
+						<h4>The environment requires:</h4>
+
+						<ul style="font-size: .75em;">
+							<li>Installation of PyTorch</li>
+							<li>Using LLMs through Ollama</li>
+							<li>Creating a RAG with Llama Index</li>
+						</ul>
+					</section>
+
+			</section>
+					<section>
+						<section>
+							<h2>Our Solution - Cookbooks</h2>
+							<img src="./Architecture.png" alt="Architecture">
+						</section>
+					</section>
+					<section>
+						<section>
+							<h2>Docker Image</h2>
+							<p><a href="https://github.com/In-For-Disaster-Analytics/LLMRepository-Docker">Repo</a></p>
+							<ul>
+								<li>Templates of the Image</li>
+								<li>Github actions allow for autobuilding the docker image.</li>
+								<li>Dockerfile</li>
+								<li>Entrypoint run.sh</li>
+							</ul>
+						</section>
+						<section>
+							<h2>Templates</h2>
+							<p>
+								<sup>
+									<a href="https://github.com/In-For-Disaster-Analytics/Cookbook-Docker-Template">Hello World</a>;
+									<a href="https://github.com/In-For-Disaster-Analytics/Cookbook-Conda-Template">Conda Template</a>;
+									<a href="https://github.com/In-For-Disaster-Analytics/Cookbook-Jupyter-Template">Jupyter Template</a>
+								</sup>
+								
+							</p>
+							<img src="./Template.png" style="height:11em">
+						</section>
+						<section>
+							<h2>Github Actions - Autobuild</h2>
+							<img src="./GithubActions.png" alt="Github Actions">
+							<p>Through the Templates we are able to automatically have a docker image built.</p>
+							
+						</section>
+						<section>
+							<h2>run.sh</h2>
+							<ul>
+								<li>Configured to run on Lonestar6</li>
+								<li>Organized into 17 functions to make customization easier.</li>
+								<li>Creates an environment using Binder Standards</li>
+							</ul>
+						</section>
+						<section>
+							<h2>run.sh - install Ollama</h2>
+							<p>Simple function provides all the functionality.</p>
+							<pre><code data-line-numbers data-ln-start-from="279">function start_ollama(){
+	if [ ! -f $SCRATCH/ollama ]; then
+		wget "https://github.com/ollama/ollama/releases\
+		/download/v0.1.20/ollama-linux-amd64"
+		chmod 755 ollama-linux-amd64
+		mv ollama-linux-amd64 $SCRATCH/ollama
+	fi
+	nohup $SCRATCH/ollama serve &
+}
+							</code></pre>
+						</section>
+					</section>
+				<section>
+					<section>
+						<h2>Environment Repo</h2>
+						<p><a href="https://github.com/In-For-Disaster-Analytics/sites-and-stories-nlp/tree/dev">Repo</a></p>
+						<ul>
+							<li>Provides the python environment to install.</li>
+							<li>Interactive tutorials or analyses</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Binder Standards</h2>
+						<img src="./binder.png" alt="Binder Directories">
+						<ul>
+							<li>Requires the environment.yml</li>
+							<li>Supports the requirement.txt</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Leveraging TAPIS</h2>
+						<p>TAPIS provides a way to register an application using a json description of the file.</p>
+						<img src="./UI.png" alt="UI">
+						<!-- <iframe style="height:75%; width:75%" data-src="https://in-for-disaster-analytics.github.io/cookbooks-ui/#/apps/jupyter-lab-llama-ls6-dev2/0.0.4" data-preload></iframe> -->
+					</section>
+					<section>
+						<h2>Leveraging TAPIS</h2>
+						<p>We can then share the application with individual users, an allocation, or set it to public</p>
+						<img src="./Share.png" alt="Share">
+					</section>
+				</section>
+				<section>
+					<h2>Takeaways</h2>
+					<ul>
+						<li>Rapid Development of HPC workflows.</li>
+						<li>Give the users a variety of methods to load apps.</li>
+					</ul>
+					
+				</section>
+				</section>
+			</div>
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			Reveal.initialize({
+				slideNumber:true,
+				width: 960,
+				height: 700,
+				margin: 0.04,
+				minScale: 0.2,
+				maxScale: 2.0,
+				center:false,
+				hash: true,
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
